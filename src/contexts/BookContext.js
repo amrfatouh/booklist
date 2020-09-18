@@ -1,20 +1,20 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useReducer, useEffect } from 'react'
+import { BookReducer } from '../reducers/BookReducer';
 
 export const BookContext = createContext();
 
 function BookContextProvider(props) {
-    const [books, setBooks] = useState([
-        { title: 'Name of The Wind', author: 'Patrick Rothfuss', id: 1 },
-        { title: 'The Final Empire', author: 'Brandon Sanderson', id: 2 }
-    ]);
-    const addBook = (title, author) => {
-        setBooks([...books, { title, author, id: Math.random() }]);
-    }
-    const removeBook = (id) => {
-        setBooks(books.filter(book => book.id !== id));
-    }
+    const [books, dispatch] = useReducer(BookReducer, [], () => {
+        let storedItems = localStorage.getItem('books');
+        return storedItems ? JSON.parse(storedItems) : [];
+    });
+
+    useEffect(() => {
+        localStorage.setItem('books', JSON.stringify(books));
+    }, [books]);
+
     return (
-        <BookContext.Provider value={{ books, addBook, removeBook }}>
+        <BookContext.Provider value={{ books, dispatch }}>
             {props.children}
         </BookContext.Provider>
     )
