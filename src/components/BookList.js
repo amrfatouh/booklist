@@ -2,14 +2,14 @@ import React, { useContext, useState } from 'react'
 import { BookContext } from '../contexts/BookContext'
 
 function BookList() {
-    const { books, addBook, removeBook } = useContext(BookContext);
+    const { books, dispatch } = useContext(BookContext);
 
     const [title, setTitle] = useState('');
     const [author, setAuthor] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        addBook(title, author)
+        dispatch({ type: 'ADD_BOOK', book: { title, author } });
         setTitle('');
         setAuthor('');
     }
@@ -19,7 +19,7 @@ function BookList() {
             <ul>
                 {books.length ? (books.map(book => {
                     return (
-                        <li key={book.id} onClick={() => removeBook(book.id)}>
+                        <li key={book.id} onClick={() => dispatch({ type: 'REMOVE_BOOK', id: book.id })}>
                             <div className='title'>{book.title}</div>
                             <div className='author'>{book.author}</div>
                         </li>
